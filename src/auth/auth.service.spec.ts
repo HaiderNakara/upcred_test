@@ -10,6 +10,9 @@ describe('AuthService', () => {
     findOne: jest.fn(
       (email: string) =>
         new Promise((resolve, reject) => {
+          if (email !== 'test') {
+            resolve(null);
+          }
           resolve({
             email: email,
             password: '123456',
@@ -69,11 +72,11 @@ describe('AuthService', () => {
       accessToken: expect.any(String),
     });
   });
-  // it('should login a user', async () => {
-  //   const result = await service.login("email1@gmail.com", "123456");
-  //   expect(result).toEqual({
-  //     accessToken: expect.any(String),
-  //   });
-  // }
-  // );
+  it('should login a user', async () => {
+    const result = await service.login("test", "123456");
+    expect(result).toEqual({
+      accessToken: expect.any(String),
+    });
+  }
+  );
 });

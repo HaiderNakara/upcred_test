@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -40,10 +41,26 @@ describe('AppController', () => {
       return mockUser;
     }),
   }
+  const mockJwtService = {
+    sign: jest.fn((payload: any) => {
+      return '123456';
+    }),
+    verify: jest.fn((token: string) => {
+      return {
+        _id: '1',
+        name: 'test',
+        email: ''
+      }
+    })
+  }
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      // JwtService,
+
       controllers: [AppController],
-      providers: [AppService],
+      providers: [AppService,
+
+      ],
     }).overrideProvider(AppService).useValue(mockAppService).compile();
 
     appController = app.get<AppController>(AppController);
@@ -56,5 +73,71 @@ describe('AppController', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
+  describe('getContacts', () => {
+    it('should return a list of contacts', async () => {
+      expect(await appController.getContacts(1, '')).toEqual([
+        {
+          _id: expect.any(String),
+          name: expect.any(String),
+          email: expect.any(String),
+          phone: expect.any(String),
+          address: expect.any(String),
+          description: expect.any(String),
+        },
+      ]);
+    });
+  });
+  describe('getContact', () => {
+    it('should return a contact', async () => {
+      expect(await appController.getContact('1')).toEqual({
+        _id: expect.any(String),
+        name: expect.any(String),
+        email: expect.any(String),
+        phone: expect.any(String),
+        address: expect.any(String),
+        description: expect.any(String),
+      });
+    });
+  }
+  );
+  describe('addContact', () => {
+    it('should return a contact', async () => {
 
+      expect(await appController.addContact(contact)).toEqual({
+        _id: expect.any(String),
+        name: expect.any(String),
+        email: expect.any(String),
+        phone: expect.any(String),
+        address: expect.any(String),
+        description: expect.any(String),
+      });
+
+    });
+  });
+  describe('updateContact', () => {
+    it('should return a contact', async () => {
+
+      expect(await appController.updateContact('1', contact)).toEqual({
+        _id: expect.any(String),
+        name: expect.any(String),
+        email: expect.any(String),
+        phone: expect.any(String),
+        address: expect.any(String),
+        description: expect.any(String),
+      });
+    });
+  });
+  describe('deleteContact', () => {
+    it('should return a contact', async () => {
+      expect(await appController.deleteContact('1')).toEqual({
+        _id: expect.any(String),
+        name: expect.any(String),
+        email: expect.any(String),
+        phone: expect.any(String),
+        address: expect.any(String),
+        description: expect.any(String),
+      });
+    });
+  }
+  );
 });
